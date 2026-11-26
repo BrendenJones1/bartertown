@@ -1,0 +1,11 @@
+# Fixed value anchors included in every judge prompt (CLAUDE.md §7).
+anchors:
+  - { name: A paperclip, value: 1 }
+  - { name: A coffee mug, value: 4 }
+  - { name: A movie ticket, value: 10 }
+  - { name: A used bike, value: 40 }
+  - { name: A concert ticket, value: 100 }
+  - { name: A used smartphone, value: 400 }
+  - { name: A used car, value: 500 }
+  - { name: A used motorcycle, value: 1500 }
+  - { name: A small house, value: 2000 }
