@@ -51,6 +51,10 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ github.token }}
+          # Agent PRs are opened by our own App. The job's `if` already limits this to
+          # agent/ branches in this repo, so the bot author and its code are trusted.
+          allowed_bots: bartertown-agent-brendenjones1
+          restrict_untrusted_prs: "false"
           prompt: |
             You are the REVIEW agent for this repository. You did not write this code.
             Read CLAUDE.md fully (especially sections 3-7 and 10).
@@ -152,6 +156,8 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ steps.app.outputs.token }}
+          allowed_bots: bartertown-agent-brendenjones1
+          restrict_untrusted_prs: "false"
           prompt: |
             You are the IMPLEMENTATION agent. Read CLAUDE.md (section 9 are your rules).
             The review agent requested changes on PR #${{ github.event.pull_request.number }}
