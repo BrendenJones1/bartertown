@@ -1,0 +1,51 @@
+# Light "CD": run a tournament on demand and publish the results as an artifact
+# plus a leaderboard in the job summary. Provider keys live in the `tournament`
+# environment, so the coding-agent workflows can never read them.
+name: tournament
+
+on:
+  workflow_dispatch:
+    inputs:
+      config:
+        description: Config to run
+        type: choice
+        options: [config/dev.yaml, config/tournament.yaml]
+        default: config/dev.yaml
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    environment: tournament
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync
+
+      - name: Run tournament
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          CONFIG: ${{ inputs.config }}
+        run: uv run paperclip run --config "$CONFIG" --out results
+
+      - name: Leaderboard to job summary
+        if: always()
+        run: |
+          f=$(find results -name leaderboard.md | head -n1)
+          if [ -n "$f" ]; then cat "$f" >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ github.run_id }}
+          path: results/
+          retention-days: 30

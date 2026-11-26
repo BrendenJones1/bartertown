@@ -1,0 +1,37 @@
+# Cheap dev table: 8 Haiku seats, 1 seed, short games. Pennies per game.
+# Families are faked so leave-one-out judging still exercises its code path.
+
+tournament:
+  run_id: dev
+  seeds: [1]
+  rotate_seats: false
+
+game:
+  turns: 6
+  starting_items_per_agent: 4
+  starting_value_ceiling: 15
+  auction_items_per_turn: 1
+  trade_rounds_per_turn: 1
+  trend_shock_every: 3
+  craft_value_cap: 1.5
+  history_window: 20
+  agent_temperature: 0.7
+
+seats:
+  - { id: h1, family: f1, model: anthropic/claude-haiku-5-5 }
+  - { id: h2, family: f1, model: anthropic/claude-haiku-5-5 }
+  - { id: h3, family: f2, model: anthropic/claude-haiku-5-5 }
+  - { id: h4, family: f2, model: anthropic/claude-haiku-5-5 }
+  - { id: h5, family: f3, model: anthropic/claude-haiku-5-5 }
+  - { id: h6, family: f3, model: anthropic/claude-haiku-5-5 }
+  - { id: h7, family: f4, model: anthropic/claude-haiku-5-5 }
+  - { id: h8, family: f4, model: anthropic/claude-haiku-5-5 }
+
+judges:
+  temperature: 0
+  normalizer: anthropic/claude-haiku-5-5
+  panel:
+    - { family: f1, model: anthropic/claude-haiku-5-5 }
+    - { family: f2, model: anthropic/claude-haiku-5-5 }
+    - { family: f3, model: anthropic/claude-haiku-5-5 }
+    - { family: f4, model: anthropic/claude-haiku-5-5 }

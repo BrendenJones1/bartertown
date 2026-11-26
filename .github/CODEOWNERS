@@ -1,0 +1,6 @@
+# With "Require review from Code Owners"
+# on, every PR needs your approval, and only you can approve changes to workflows/spec.
+*                     @BrendenJones1
+/.github/             @BrendenJones1
+/CLAUDE.md            @BrendenJones1
+/config/tournament.yaml @BrendenJones1

@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv sync
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format
+        run: uv run ruff format --check .
+      - name: Tests (no network)
+        run: uv run pytest -q
+      - name: Smoke game (mock agents)
+        # Informational until you set repo variable SMOKE_REQUIRED=true (after the CLI issue merges).
+        continue-on-error: ${{ vars.SMOKE_REQUIRED != 'true' }}
+        run: uv run paperclip smoke

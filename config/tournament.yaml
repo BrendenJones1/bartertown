@@ -1,0 +1,40 @@
+# Full tournament: 3 seeds x 8 seat rotations = 24 games.
+# Model strings use LiteLLM format: <provider>/<model-id>.
+# Model IDs current as of Nov 2026; check each provider before a paid run.
+
+tournament:
+  run_id: main-v1
+  seeds: [101, 202, 303]
+  rotate_seats: true # each seed played 8x, every model shifted one seat per game
+
+game:
+  turns: 20
+  starting_items_per_agent: 4 # includes the paperclip
+  starting_value_ceiling: 15
+  auction_items_per_turn: 2
+  trade_rounds_per_turn: 2
+  trend_shock_every: 5
+  craft_value_cap: 1.5
+  history_window: 40
+  agent_temperature: 0.7
+
+seats:
+  - { id: claude-opus, family: anthropic, model: anthropic/claude-opus-5-5 }
+  - { id: claude-haiku, family: anthropic, model: anthropic/claude-haiku-5-5 }
+  - { id: gpt-flagship, family: openai, model: openai/gpt-6.2-astra }
+  - { id: gpt-small, family: openai, model: openai/gpt-5.4-mini }
+  - { id: gemini-flagship, family: google, model: gemini/gemini-3.1-pro-preview }
+  - { id: gemini-small, family: google, model: gemini/gemini-3.8-flash }
+  - { id: grok, family: xai, model: xai/grok-4.7 }
+  - { id: deepseek, family: deepseek, model: deepseek/deepseek-v4-pro }
+
+judges:
+  temperature: 0
+  normalizer: anthropic/claude-haiku-5-5
+  # One strong model per family. Leave-one-out drops the judged seat's family.
+  panel:
+    - { family: anthropic, model: anthropic/claude-opus-5-5 }
+    - { family: openai, model: openai/gpt-6.2-astra }
+    - { family: google, model: gemini/gemini-3.1-pro-preview }
+    - { family: xai, model: xai/grok-4.7 }
+    - { family: deepseek, model: deepseek/deepseek-v4-pro }

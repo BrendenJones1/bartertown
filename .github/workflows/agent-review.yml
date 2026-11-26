@@ -1,0 +1,172 @@
+# Review agent + capped fix loop.
+#   review: a separate Claude agent (read-only tools, posts as github-actions[bot]) reviews
+#           every push to an agent/ PR and ends with "VERDICT: LGTM" or "VERDICT: CHANGES_REQUESTED".
+#   fix:    if the verdict is CHANGES_REQUESTED, the implementation agent addresses it and pushes
+#           with the bot token, which re-triggers this workflow. After MAX_FIX_ROUNDS change
+#           requests the PR gets `needs-human` and the loop stops.
+# Reviews are comments, never approvals, so only you can approve and merge.
+name: agent-review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: agent-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  MAX_FIX_ROUNDS: "3"
+
+jobs:
+  review:
+    if: >-
+      startsWith(github.head_ref, 'agent/') &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.draft &&
+      !contains(github.event.pull_request.labels.*.name, 'needs-human')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync
+
+      - name: Review PR
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ github.token }}
+          prompt: |
+            You are the REVIEW agent for this repository. You did not write this code.
+            Read CLAUDE.md fully (especially sections 3-7 and 10).
+
+            Review PR #${{ github.event.pull_request.number }}:
+              gh pr view ${{ github.event.pull_request.number }} --comments
+              gh pr diff ${{ github.event.pull_request.number }}
+            Also read the linked issue (gh issue view <n>) and any earlier reviews.
+            Run: uv run ruff check . && uv run pytest -q
+
+            Check, in priority order: correctness vs the spec and issue; determinism and
+            seeding; hidden-information leaks (agents seeing base values, others'
+            preferences, or judge scores); network calls in tests; test coverage; style.
+            Do not nitpick. Only request changes for real problems.
+
+            Post exactly ONE review with:
+              gh pr review ${{ github.event.pull_request.number }} --comment --body "<review>"
+            Number each problem with file:line. The last line of the body must be exactly
+            "VERDICT: LGTM" or "VERDICT: CHANGES_REQUESTED".
+            Do not edit files. Do not approve. Do not merge.
+          claude_args: >-
+            --model claude-opus-5-5
+            --max-turns 40
+            --allowedTools "Read,Glob,Grep,Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr review:*),Bash(gh issue view:*),Bash(uv run pytest:*),Bash(uv run ruff check:*),Bash(git log:*),Bash(git diff:*),Bash(git show:*)"
+
+  fix:
+    needs: review
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Read latest verdict
+        id: verdict
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          bodies=$(gh api "repos/$REPO/pulls/$PR/reviews" --paginate \
+            --jq '.[] | select(.user.login == "github-actions[bot]") | .body')
+          last=$(printf '%s\n' "$bodies" | grep -o 'VERDICT: [A-Z_]*' | tail -n1 || true)
+          rounds=$(printf '%s\n' "$bodies" | grep -c 'VERDICT: CHANGES_REQUESTED' || true)
+          echo "last=${last#VERDICT: }" >> "$GITHUB_OUTPUT"
+          echo "rounds=${rounds:-0}" >> "$GITHUB_OUTPUT"
+          echo "Latest verdict: ${last:-none}, change-request rounds: ${rounds:-0}"
+
+      - name: Hand off to human after too many rounds
+        if: >-
+          steps.verdict.outputs.last == 'CHANGES_REQUESTED' &&
+          fromJSON(steps.verdict.outputs.rounds) > fromJSON(env.MAX_FIX_ROUNDS)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr edit "$PR" --repo "${{ github.repository }}" --add-label needs-human
+          gh pr comment "$PR" --repo "${{ github.repository }}" \
+            --body "Agents hit the fix-round limit (${MAX_FIX_ROUNDS}). Needs a human look."
+
+      - name: Mint bot token
+        id: app
+        if: >-
+          steps.verdict.outputs.last == 'CHANGES_REQUESTED' &&
+          fromJSON(steps.verdict.outputs.rounds) <= fromJSON(env.MAX_FIX_ROUNDS)
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AGENT_APP_ID }}
+          private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        if: steps.app.outcome == 'success'
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ steps.app.outputs.token }}
+          fetch-depth: 0
+
+      - name: Configure git as the bot
+        if: steps.app.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          SLUG: ${{ steps.app.outputs.app-slug }}
+        run: |
+          id=$(gh api "/users/${SLUG}[bot]" --jq .id)
+          git config user.name "${SLUG}[bot]"
+          git config user.email "${id}+${SLUG}[bot]@users.noreply.github.com"
+
+      - uses: astral-sh/setup-uv@v6
+        if: steps.app.outcome == 'success'
+      - run: uv sync
+        if: steps.app.outcome == 'success'
+
+      - name: Address review
+        if: steps.app.outcome == 'success'
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.app.outputs.token }}
+          prompt: |
+            You are the IMPLEMENTATION agent. Read CLAUDE.md (section 9 are your rules).
+            The review agent requested changes on PR #${{ github.event.pull_request.number }}
+            (branch ${{ github.head_ref }}, already checked out).
+
+            Read the latest review:
+              gh pr view ${{ github.event.pull_request.number }} --json reviews --jq '[.reviews[] | select(.author.login | startswith("github-actions"))][-1].body'
+            Also read any comments the repo owner left on the PR; they take priority.
+            Fix every numbered item that is a real problem. If you disagree with an item,
+            do not change code for it; explain why in your reply comment.
+            Run: uv run ruff format . && uv run ruff check . && uv run pytest -q
+            Commit and push to the same branch. Then reply with one comment:
+              gh pr comment ${{ github.event.pull_request.number }} --body "<what you changed / disputed>"
+            Never edit .github/**, never merge, never push to main.
+          claude_args: >-
+            --model claude-opus-5-5
+            --max-turns 60
+            --allowedTools "Read,Write,Edit,Glob,Grep,Bash(uv:*),Bash(git:*),Bash(gh pr view:*),Bash(gh pr comment:*),Bash(gh issue view:*)"
