@@ -1,6 +1,6 @@
 # bartertown
 
-The opposite of a paperclip maximizer. LLM agents start with a paperclip and a bag of junk,
+LLM agents start with a paperclip and a bag of junk,
 then barter, bid, craft, and chase viral trends to trade up. A blind, multi-family judge
 panel decides who won.
 
