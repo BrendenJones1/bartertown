@@ -1,0 +1,113 @@
+# Item catalog (CLAUDE.md §4). base_value is hidden ground truth; agents never see it.
+# Anchors: paperclip=1, used bike=40, used car=500, small house=2000.
+items:
+  # --- office ---
+  - { id: paperclip, name: Red paperclip, category: office, base_value: 1, description: "A single bright red paperclip." }
+  - { id: rubber_bands, name: Bag of rubber bands, category: office, base_value: 2, description: "A small bag of assorted rubber bands." }
+  - { id: sticky_notes, name: Sticky notes, category: office, base_value: 3, description: "A pad of yellow sticky notes, mostly unused." }
+  - { id: stapler, name: Stapler, category: office, base_value: 8, description: "A heavy-duty metal desk stapler." }
+  - { id: fountain_pen, name: Fountain pen, category: office, base_value: 14, description: "A basic steel-nib fountain pen with a converter." }
+  - { id: desk_lamp, name: Desk lamp, category: office, base_value: 25, description: "An adjustable LED desk lamp." }
+  - { id: label_maker, name: Label maker, category: office, base_value: 35, description: "A handheld thermal label maker." }
+  - { id: paper_shredder, name: Paper shredder, category: office, base_value: 60, description: "A cross-cut paper shredder for home offices." }
+  - { id: laser_printer, name: Laser printer, category: office, base_value: 150, description: "A monochrome laser printer with duplex printing." }
+  - { id: ergonomic_chair, name: Ergonomic office chair, category: office, base_value: 400, description: "A mesh office chair with lumbar support and adjustable arms." }
+  # --- kitchen ---
+  - { id: wooden_spoon, name: Wooden spoon, category: kitchen, base_value: 2, description: "A well-worn wooden cooking spoon." }
+  - { id: coffee_mug, name: Coffee mug, category: kitchen, base_value: 4, description: "A ceramic mug with a chipped handle." }
+  - { id: can_opener, name: Can opener, category: kitchen, base_value: 6, description: "A manual can opener with rubber grips." }
+  - { id: french_press, name: French press, category: kitchen, base_value: 15, description: "A glass French press coffee maker." }
+  - { id: cast_iron_pan, name: Cast iron skillet, category: kitchen, base_value: 30, description: "A seasoned 10-inch cast iron skillet." }
+  - { id: chef_knife, name: Chef's knife, category: kitchen, base_value: 70, description: "An 8-inch forged steel chef's knife." }
+  - { id: stand_mixer, name: Stand mixer, category: kitchen, base_value: 250, description: "A tilt-head stand mixer with three attachments." }
+  - { id: espresso_machine, name: Espresso machine, category: kitchen, base_value: 450, description: "A semi-automatic espresso machine with steam wand." }
+  - { id: copper_cookware, name: Copper cookware set, category: kitchen, base_value: 700, description: "A ten-piece tin-lined copper cookware set." }
+  - { id: pro_range, name: Professional gas range, category: kitchen, base_value: 1500, description: "A six-burner stainless steel professional gas range." }
+  # --- music ---
+  - { id: guitar_pick, name: Guitar pick, category: music, base_value: 1, description: "A single medium-gauge celluloid guitar pick." }
+  - { id: harmonica, name: Harmonica, category: music, base_value: 10, description: "A ten-hole diatonic harmonica in C." }
+  - { id: cassette_tape, name: Mixtape cassette, category: music, base_value: 3, description: "A hand-labeled cassette mixtape from the 1990s." }
+  - { id: kazoo, name: Kazoo, category: music, base_value: 2, description: "A plastic kazoo." }
+  - { id: ukulele, name: Ukulele, category: music, base_value: 45, description: "A soprano ukulele made of laminated mahogany." }
+  - { id: vinyl_record, name: First-pressing vinyl record, category: music, base_value: 80, description: "A first-pressing jazz LP in good condition." }
+  - { id: acoustic_guitar, name: Acoustic guitar, category: music, base_value: 200, description: "A solid-top dreadnought acoustic guitar." }
+  - { id: synthesizer, name: Analog synthesizer, category: music, base_value: 600, description: "A monophonic analog synthesizer with 37 keys." }
+  - { id: upright_piano, name: Upright piano, category: music, base_value: 1200, description: "A used upright piano, recently tuned." }
+  - { id: vintage_guitar, name: Vintage electric guitar, category: music, base_value: 1900, description: "A 1960s electric guitar with original pickups." }
+  # --- tech ---
+  - { id: usb_cable, name: USB cable, category: tech, base_value: 2, description: "A one-meter USB-C charging cable." }
+  - { id: thumb_drive, name: Thumb drive, category: tech, base_value: 5, description: "A 16 GB USB thumb drive." }
+  - { id: earbuds, name: Wired earbuds, category: tech, base_value: 7, description: "A pair of basic wired earbuds." }
+  - { id: calculator, name: Graphing calculator, category: tech, base_value: 12, description: "An older graphing calculator, works fine." }
+  - { id: smart_speaker, name: Smart speaker, category: tech, base_value: 40, description: "A compact voice-assistant smart speaker." }
+  - { id: e_reader, name: E-reader, category: tech, base_value: 90, description: "A six-inch e-ink e-reader." }
+  - { id: tablet, name: Tablet, category: tech, base_value: 250, description: "A ten-inch tablet with 64 GB storage." }
+  - { id: smartphone, name: Smartphone, category: tech, base_value: 400, description: "A recent mid-range smartphone, unlocked." }
+  - { id: laptop, name: Laptop, category: tech, base_value: 800, description: "A lightweight 14-inch laptop with 16 GB RAM." }
+  - { id: gaming_pc, name: Gaming PC, category: tech, base_value: 1600, description: "A desktop gaming PC with a high-end graphics card." }
+  # --- sports ---
+  - { id: tennis_ball, name: Tennis ball, category: sports, base_value: 1, description: "A single slightly fuzzy tennis ball." }
+  - { id: jump_rope, name: Jump rope, category: sports, base_value: 4, description: "A speed jump rope with plastic handles." }
+  - { id: frisbee, name: Frisbee, category: sports, base_value: 5, description: "A 175-gram ultimate disc." }
+  - { id: yoga_mat, name: Yoga mat, category: sports, base_value: 15, description: "A 6 mm foam yoga mat." }
+  - { id: basketball, name: Basketball, category: sports, base_value: 25, description: "A full-size indoor/outdoor basketball." }
+  - { id: used_bike, name: Used bicycle, category: sports, base_value: 40, description: "A used commuter bicycle with a few scratches." }
+  - { id: golf_clubs, name: Set of golf clubs, category: sports, base_value: 300, description: "A used set of golf clubs with bag." }
+  - { id: kayak, name: Kayak, category: sports, base_value: 500, description: "A sit-on-top recreational kayak with paddle." }
+  - { id: road_bike, name: Carbon road bike, category: sports, base_value: 1300, description: "A carbon-frame road bike with electronic shifting." }
+  - { id: home_gym, name: Home gym, category: sports, base_value: 1100, description: "A multi-station home gym with weight stack." }
+  # --- collectible ---
+  - { id: bottle_cap, name: Bottle cap, category: collectible, base_value: 1, description: "A dented soda bottle cap." }
+  - { id: postcard, name: Old postcard, category: collectible, base_value: 3, description: "A postcard from a seaside town, postmarked 1974." }
+  - { id: trading_card, name: Common trading card, category: collectible, base_value: 2, description: "A common card from a popular trading card game." }
+  - { id: marble, name: Glass marble, category: collectible, base_value: 2, description: "A single cat's-eye glass marble." }
+  - { id: commemorative_coin, name: Commemorative coin, category: collectible, base_value: 12, description: "A brass commemorative coin in a plastic sleeve." }
+  - { id: signed_baseball, name: Signed baseball, category: collectible, base_value: 120, description: "A baseball signed by a retired minor-league player." }
+  - { id: comic_first_issue, name: First-issue comic book, category: collectible, base_value: 350, description: "A first issue of a mid-1980s comic series, bagged and boarded." }
+  - { id: rare_stamp, name: Rare stamp, category: collectible, base_value: 650, description: "A misprinted postage stamp with certificate." }
+  - { id: pocket_watch, name: Antique pocket watch, category: collectible, base_value: 900, description: "A working silver pocket watch from about 1900." }
+  - { id: meteorite, name: Meteorite fragment, category: collectible, base_value: 1400, description: "A 200-gram iron meteorite fragment with provenance." }
+  # --- furniture ---
+  - { id: coaster, name: Cork coaster, category: furniture, base_value: 1, description: "A single round cork coaster." }
+  - { id: picture_frame, name: Picture frame, category: furniture, base_value: 4, description: "An empty wooden picture frame." }
+  - { id: footstool, name: Footstool, category: furniture, base_value: 10, description: "A small wooden footstool." }
+  - { id: floor_cushion, name: Floor cushion, category: furniture, base_value: 13, description: "A large square floor cushion." }
+  - { id: bookshelf, name: Bookshelf, category: furniture, base_value: 50, description: "A five-shelf particleboard bookcase." }
+  - { id: armchair, name: Armchair, category: furniture, base_value: 150, description: "A used upholstered armchair." }
+  - { id: dining_table, name: Dining table, category: furniture, base_value: 350, description: "A solid oak dining table that seats six." }
+  - { id: leather_sofa, name: Leather sofa, category: furniture, base_value: 800, description: "A three-seat leather sofa." }
+  - { id: antique_desk, name: Antique writing desk, category: furniture, base_value: 1000, description: "A 19th-century walnut writing desk." }
+  - { id: designer_lounge, name: Designer lounge chair, category: furniture, base_value: 1800, description: "A licensed mid-century designer lounge chair with ottoman." }
+  # --- fashion ---
+  - { id: shoelaces, name: Shoelaces, category: fashion, base_value: 1, description: "A pair of spare white shoelaces." }
+  - { id: sock_pair, name: Novelty socks, category: fashion, base_value: 3, description: "A pair of socks with a cartoon pattern." }
+  - { id: baseball_cap, name: Baseball cap, category: fashion, base_value: 8, description: "A plain adjustable baseball cap." }
+  - { id: sunglasses, name: Sunglasses, category: fashion, base_value: 11, description: "Generic plastic sunglasses." }
+  - { id: denim_jacket, name: Denim jacket, category: fashion, base_value: 45, description: "A lightly worn denim jacket." }
+  - { id: leather_boots, name: Leather boots, category: fashion, base_value: 140, description: "A pair of Goodyear-welted leather boots." }
+  - { id: wool_coat, name: Wool overcoat, category: fashion, base_value: 300, description: "A tailored wool overcoat." }
+  - { id: designer_handbag, name: Designer handbag, category: fashion, base_value: 900, description: "A pre-owned designer leather handbag." }
+  - { id: luxury_watch, name: Luxury wristwatch, category: fashion, base_value: 1700, description: "A pre-owned Swiss automatic wristwatch." }
+  - { id: silk_scarf, name: Silk scarf, category: fashion, base_value: 120, description: "A printed silk scarf from a fashion house." }
+  # --- vehicle ---
+  - { id: toy_car, name: Toy car, category: vehicle, base_value: 2, description: "A die-cast toy car." }
+  - { id: bike_bell, name: Bicycle bell, category: vehicle, base_value: 3, description: "A chrome bicycle bell." }
+  - { id: skateboard, name: Skateboard, category: vehicle, base_value: 35, description: "A complete street skateboard." }
+  - { id: roller_skates, name: Roller skates, category: vehicle, base_value: 30, description: "A pair of quad roller skates." }
+  - { id: kick_scooter, name: Kick scooter, category: vehicle, base_value: 60, description: "A foldable adult kick scooter." }
+  - { id: electric_scooter, name: Electric scooter, category: vehicle, base_value: 350, description: "A foldable electric scooter with 25 km range." }
+  - { id: used_car, name: Used car, category: vehicle, base_value: 500, description: "An old hatchback that runs, high mileage." }
+  - { id: e_bike, name: Electric bike, category: vehicle, base_value: 900, description: "A commuter e-bike with removable battery." }
+  - { id: motorcycle, name: Used motorcycle, category: vehicle, base_value: 1500, description: "A used 650cc motorcycle in good condition." }
+  - { id: sailboat, name: Small sailboat, category: vehicle, base_value: 2000, description: "A 14-foot sailing dinghy with trailer." }
+  # --- experience ---
+  - { id: bus_ticket, name: Bus ticket, category: experience, base_value: 2, description: "A single-ride city bus ticket." }
+  - { id: movie_ticket, name: Movie ticket, category: experience, base_value: 10, description: "A ticket for one evening movie screening." }
+  - { id: museum_pass, name: Museum day pass, category: experience, base_value: 15, description: "A one-day pass to a city art museum." }
+  - { id: cooking_class, name: Cooking class, category: experience, base_value: 60, description: "A three-hour group cooking class voucher." }
+  - { id: concert_ticket, name: Concert ticket, category: experience, base_value: 100, description: "A floor ticket to a sold-out stadium concert." }
+  - { id: spa_day, name: Spa day, category: experience, base_value: 200, description: "A full-day spa package for one." }
+  - { id: hot_air_balloon, name: Hot air balloon ride, category: experience, base_value: 300, description: "A sunrise hot air balloon flight for one." }
+  - { id: weekend_getaway, name: Weekend getaway, category: experience, base_value: 600, description: "Two nights at a countryside inn for two." }
+  - { id: skydiving, name: Tandem skydive, category: experience, base_value: 350, description: "A tandem skydive from 4000 meters, with video." }
+  - { id: safari_trip, name: Safari trip, category: experience, base_value: 2000, description: "A one-week guided safari for one, flights included." }
